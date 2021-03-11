@@ -1,21 +1,32 @@
 import React, { Component } from 'react';
 import './App.css';
 import transcript97 from './resources/homeskoolin-97-transcript.json';
+import transcript1 from './resources/corona-1-transcript.json';
+import transcript2 from './resources/corona-2-transcript.json';
+import transcript3 from './resources/corona-3-transcript.json';
+import transcript4 from './resources/corona-4-transcript.json';
 
 let DataSet = transcript97.Content;
+let ObjectDataArray = [transcript97, transcript1, transcript2, transcript3, transcript4];
 
 const styleInfo = {
-  paddingRight:'10px'
+
 }
 const elementStyle ={
   border:'solid',
   borderRadius:'10px',
   position:'relative',
-  left:'10vh',
-  height:'3vh',
-  width:'20vh',
-  marginTop:'5vh',
-  marginBottom:'10vh'
+  marginTop:'2vh',
+  marginBottom:'5vh'
+}
+
+const timestampContentStyle={
+  fontSize:18
+}
+
+const episodeTitleStyle ={
+  fontSize:13,
+  position:'relative'
 }
 
 let urlPathAndTime = transcript97.URL
@@ -69,29 +80,41 @@ class App extends React.Component {
 
   render(){
     console.log('render is running.');
-    let items = DataSet.filter((data)=>{
-      if(this.state.search == null)
-          return null;
-      else if(data.Text.toLowerCase().includes(this.state.search.toLowerCase())){
-          console.log('Matched ' + this.state.search.toLowerCase() + ' to Data Object:' + data.content);
-          return data;
-      }
+    let allItems = [];
+    let items;
+    let objects = ObjectDataArray.filter((object)=>{
+      console.log('OBJECT NAME:' + object['Episode Title']);
+
+      items = object.Content.filter((data)=>{
+        if(this.state.search == null || this.state.search == ""){
+            items = [];
+            return null;
+      }else if(data.Text.toLowerCase().includes(this.state.search.toLowerCase())){
+            console.log('Matched ' + this.state.search.toLowerCase() + ' to Data Object:' + data.content);
+            return data;
+        }
+      }).map(data=>{
+        let timetoSeconds = this.convertTimestampToSeconds(data.Timestamp);
+        //console.log('UPPER RETURN:' + timetoSeconds);
+        urlPathAndTime = object.URL+"&start="+timetoSeconds;
+        //urlPathAndTime = "&t="+timetoSeconds;
+        return(
+        <div>
+          <ul style={{listStyleType:'none'}}>
+            <li style={{position:'relative'}}>
+             <a href="javacript:return false;" onClick={(e) => this.updateUrlPathStateVal(urlPathAndTime, e) } ><span style={timestampContentStyle}>{data.Timestamp}</span></a>
+             <span style={timestampContentStyle}>  {data.Text}</span><br/>
+             <span style={episodeTitleStyle}>{object['Episode Title']}</span>
+            </li>
+          </ul>
+        </div>
+        )
+      });
+      allItems = allItems.concat(items);
+
     }).map(data=>{
-      let timetoSeconds = this.convertTimestampToSeconds(data.Timestamp);
-      console.log('TIME TO SECONDS:' + timetoSeconds);
-      urlPathAndTime = transcript97.URL+"&start="+timetoSeconds;
-      //urlPathAndTime = "&t="+timetoSeconds;
-      return(
-      <div>
-        <ul>
-          <li style={{position:'relative',left:'10vh'}}>
-           <a href="javacript:return false;" onClick={(e) => this.updateUrlPathStateVal(urlPathAndTime, e) } ><span style={styleInfo}>{data.Timestamp}</span> </a>
-            <span style={styleInfo}>{data.Text}</span>
-          </li>
-        </ul>
-      </div>
-      )
-    })
+
+    });
 
     return (
 
@@ -100,8 +123,6 @@ class App extends React.Component {
           {/* <SearchBar /> */}
           <div className="searchBar">
             <div className="youtubeEmbed">
-            {/* {`https://www.youtube.com/embed/dHFVfWs0NK4${emptyStr}`}<br/>
-            {`${urlPathAndTime}`}<br/> */}
           
             <iframe width="560" height="315" src={`${youtubeURL}`} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
             </div>
@@ -117,8 +138,11 @@ class App extends React.Component {
             }
             } />
           </div>
-          {items}
+
         </header>
+        <div className="contentResults">
+            {allItems}
+          </div>
       </div>
     )
   }
