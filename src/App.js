@@ -5,9 +5,16 @@ import transcript1 from './resources/corona-1-transcript.json';
 import transcript2 from './resources/corona-2-transcript.json';
 import transcript3 from './resources/corona-3-transcript.json';
 import transcript4 from './resources/corona-4-transcript.json';
+import transcript5 from './resources/corona-5-transcript.json';
+import transcript6 from './resources/corona-6-transcript.json';
+import transcript7 from './resources/corona-7-transcript.json';
+import transcript8 from './resources/corona-8-transcript.json';
+import transcript9 from './resources/corona-9-transcript.json';
+import transcript10 from './resources/corona-10-transcript.json';
+import transcriptH97 from './resources/homeskoolin-97-transcript.json';
 
 let DataSet = transcript97.Content;
-let ObjectDataArray = [transcript97, transcript1, transcript2, transcript3, transcript4];
+let ObjectDataArray = [transcriptH97, transcript1, transcript2, transcript3, transcript4, transcript5, transcript6, transcript7, transcript8, transcript9, transcript10];
 
 const styleInfo = {
 
