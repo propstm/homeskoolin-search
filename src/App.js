@@ -79,29 +79,24 @@ class App extends React.Component {
 
 
   render(){
-    console.log('render is running.');
     let allItems = [];
     let items;
     let objects = ObjectDataArray.filter((object)=>{
-      console.log('OBJECT NAME:' + object['Episode Title']);
-
       items = object.Content.filter((data)=>{
         if(this.state.search == null || this.state.search == ""){
             items = [];
             return null;
       }else if(data.Text.toLowerCase().includes(this.state.search.toLowerCase())){
-            console.log('Matched ' + this.state.search.toLowerCase() + ' to Data Object:' + data.content);
             return data;
         }
       }).map(data=>{
         let timetoSeconds = this.convertTimestampToSeconds(data.Timestamp);
-        //console.log('UPPER RETURN:' + timetoSeconds);
         urlPathAndTime = object.URL+"&start="+timetoSeconds;
-        //urlPathAndTime = "&t="+timetoSeconds;
         return(
         <div>
           <ul style={{listStyleType:'none'}}>
             <li style={{position:'relative'}}>
+              {/* Need to revisit the URL path logic. All links are currently using the last result in the data set. */}
              <a href="javacript:return false;" onClick={(e) => this.updateUrlPathStateVal(urlPathAndTime, e) } ><span style={timestampContentStyle}>{data.Timestamp}</span></a>
              <span style={timestampContentStyle}>  {data.Text}</span><br/>
              <span style={episodeTitleStyle}>{object['Episode Title']}</span>
@@ -128,13 +123,9 @@ class App extends React.Component {
             </div>
             <label htmlFor="search">Search Query:</label>
             <input type="text" placeholder="Enter item to be searched"  onChange={(e)=> {
-              console.log("-------------------");
-              console.log("Old state value:" + this.state.search); 
               this.setState({
                 search: e.target.value
               });
-              
-              console.log("updating state to:" + e.target.value)
             }
             } />
           </div>
