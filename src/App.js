@@ -37,9 +37,7 @@ const episodeTitleStyle ={
   position:'relative'
 }
 
-let urlPathAndTime = transcript97.URL
-let youtubeURL = urlPathAndTime;
-let emptyStr = "";
+let originalPath = transcript97.URL
 
 function convertTimestampToSeconds(timestampVal){
   let hoursPreConvert;
@@ -51,39 +49,36 @@ function convertTimestampToSeconds(timestampVal){
 
 }
 
-const VideoPlayer = () =>{
+const VideoPlayer = (props) =>{
+  useEffect(() => { 
+    console.log('Video Props:');
+    console.log(props);
+  });
   return (
     <div className="youtubeEmbed">
-      <iframe width="560" height="315" src={`${youtubeURL}`} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+      <iframe width="560" height="315" src={props.videoURL} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
     </div>
   )
 }
 
 const FilterResult = (props) => {
 
-  //TODO: need to add in correct pathing for filter results.
-
-  const [urlPath, setUrlPath] = useState(urlPathAndTime);
-  const [youtubePath, setYoutubePath] = useState(urlPathAndTime);
-
   useEffect(() => { 
-    console.log('Filter Result Props:' + props);
+    console.log('Filter Result Props:');
+    console.log(props);
   });
 
-  const updateUrlPath = (newUrl, e) => {
+  const updateUrlPath = (pathAndTime, e) => {
     e.preventDefault();
-    console.log('update url path clicked');
-    console.log(newUrl);
-    if(urlPath != newUrl){
-      setUrlPath(newUrl);
-    }
+    props.loadVideoHander(pathAndTime);
+    console.log('url path clicked' + pathAndTime);
   }
 
   return (
 
     <li style={{position:'relative'}}>
     {/* Need to revisit the URL path logic. All links are currently using the last result in the data set. */}
-    <a href="javacript:return false;" onClick={(e) => updateUrlPath(urlPath, e) } ><span style={timestampContentStyle}>{props.dataObj.Timestamp}</span></a>
+    <a href="javacript:return false;" onClick={(e) => updateUrlPath(props.pathAndTime, e) } ><span style={timestampContentStyle}>{props.dataObj.Timestamp}</span></a>
     <span style={timestampContentStyle}>  {props.dataObj.Text}</span><br/>
     <span style={episodeTitleStyle}>{props.obj['Episode Title']}</span>
     </li>
@@ -93,13 +88,12 @@ const FilterResult = (props) => {
 
 const Filter = (props) => {
   let items;
-  const [search, setSearch] = useState();
+  let allItems = [];
+
 
   useEffect(() => { 
-    console.log('Filter Result Props:' + props);
   });
 
-  let allItems = [];
   let objects = ObjectDataArray.filter((object)=>{
     items = object.Content.filter((data)=>{
       if(props.search == null || props.search == ""){
@@ -109,14 +103,13 @@ const Filter = (props) => {
           return data;
       }
     }).map(data=>{
-      let timetoSeconds = '100' //this.convertTimestampToSeconds(data.Timestamp); <-- need to fix
-      urlPathAndTime = object.URL+"&start="+timetoSeconds;
+      let timetoSeconds = convertTimestampToSeconds(data.Timestamp); 
+      
+      console.log('object URL: ' +object.URL);
+      let urlPathAndTime = object.URL+"&start="+timetoSeconds;
       return(
-      <div>
-        <ul style={{listStyleType:'none'}}>
-          <FilterResult obj = {object} dataObj = {data} />
-        </ul>
-      </div>
+      
+          <FilterResult obj = {object} pathAndTime = {urlPathAndTime} dataObj = {data} key={Math.random()} loadVideoHander = { props.loadVideoHander }/>
       )
     });
     allItems = allItems.concat(items);
@@ -125,34 +118,65 @@ const Filter = (props) => {
 
   });
 
-  return (<div>{allItems}</div>)
+  return (<div>
+            <ul style={{listStyleType:'none'}}>{allItems}</ul>
+          </div>
+        )
 }
 
 
 
 const App = () => {
+
+  const [urlPath, setUrlPath] = useState(originalPath);
   const [search, setSearch] = useState('');
+  
+    //https://www.freecodecamp.org/news/javascript-debounce-example/
+  function debounce(func, timeout = 500){
+    let timer;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => { func.apply(this, args); }, timeout);
+    };
+  }
+  function saveInput(query){
+    console.log('Saving data:' + query);
+    setSearch(query);
+  }
 
-    return (
-      <div className="App">
-        <header className="App-header">
-          {/* <SearchBar /> */}
-          <div className="searchBar">
-            <VideoPlayer />
-            <label htmlFor="search">Search Query:</label>
-            <input type="text" 
-              placeholder="Enter item to be searched"  
-              onChange={(e)=> { if(e.target.value != search){
-                console.log('search changed to: ' + e.target.value);
-                setSearch(e.target.value);
-              }}}             
-              />
-          </div>
+  const updateUrlPath = (pathAndTime) => {
 
-          <Filter search = {search} />
-        </header> 
-      </div>
-    )
-}
+    console.log('update url path clicked - APP');
+    console.log(pathAndTime);
+    
+    if(urlPath != pathAndTime){
+      console.log('URL PATH CHANGED');
+      console.log('------------------');
+      setUrlPath(pathAndTime);
+    }
+  }
+  const processChange = debounce((query) => saveInput(query));
+
+      return (
+        <div className="App">
+          <header className="App-header">
+            {/* <SearchBar /> */}
+            <div className="searchBar">
+              <VideoPlayer videoURL = {urlPath} />
+              <label htmlFor="search">Search Query:</label>
+              <input type="text" 
+                placeholder="Enter item to be searched"  
+                onChange={(e)=> { 
+                  
+                    processChange(e.target.value);
+                  }}             
+                />
+            </div>
+
+            <Filter search = {search} key="999999" loadVideoHander = { updateUrlPath}/>
+          </header> 
+        </div>
+      )
+  }
 
 export default App;
