@@ -34,7 +34,6 @@ let DataSet = transcript97.Content;
 let ObjectDataArray = [transcriptH97, transcript1, transcript2, transcript3, transcript4, transcript5, transcript6, transcript7, transcript8, transcript9, transcript10, transcript11, transcript12, transcript13, transcript14, transcript15, transcript16, transcript17, transcript18, transcript19, transcript20, transcript21, transcript22, transcriptH1, transcriptH2, transcriptH3, transcriptH4, transcriptH8];
 
 
-
 const styleInfo = {
 
 }
@@ -60,6 +59,9 @@ let originalPath = transcript97.URL
 function convertTimestampToSeconds(timestampVal){
   let hoursPreConvert;
   let seconds;
+  if(!timestampVal){
+    timestampVal = "";
+  }
   var timestampSpllit = timestampVal.split(":");
   hoursPreConvert = parseInt(timestampSpllit[0]);
   seconds = parseInt(timestampSpllit[1]);
