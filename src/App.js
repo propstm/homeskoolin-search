@@ -54,12 +54,14 @@ function convertTimestampToSeconds(timestampVal){
 const VideoPlayer = () =>{
   return (
     <div className="youtubeEmbed">
-      {/* <iframe width="560" height="315" src={`${youtubeURL}`} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> */}
+      <iframe width="560" height="315" src={`${youtubeURL}`} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
     </div>
   )
 }
 
 const FilterResult = (props) => {
+
+  //TODO: need to add in correct pathing for filter results.
 
   const [urlPath, setUrlPath] = useState(urlPathAndTime);
   const [youtubePath, setYoutubePath] = useState(urlPathAndTime);
@@ -75,64 +77,57 @@ const FilterResult = (props) => {
     if(urlPath != newUrl){
       setUrlPath(newUrl);
     }
-  
   }
 
   return (
 
     <li style={{position:'relative'}}>
     {/* Need to revisit the URL path logic. All links are currently using the last result in the data set. */}
-   <a href="javacript:return false;" onClick={(e) => updateUrlPath(urlPath, e) } ><span style={timestampContentStyle}>{props.dataObj.Timestamp}</span></a>
-   <span style={timestampContentStyle}>  {props.dataObj.Text}</span><br/>
-   <span style={episodeTitleStyle}>{props.obj['Episode Title']}</span>
-  </li>
+    <a href="javacript:return false;" onClick={(e) => updateUrlPath(urlPath, e) } ><span style={timestampContentStyle}>{props.dataObj.Timestamp}</span></a>
+    <span style={timestampContentStyle}>  {props.dataObj.Text}</span><br/>
+    <span style={episodeTitleStyle}>{props.obj['Episode Title']}</span>
+    </li>
   )
 }
 
+
 const Filter = (props) => {
-  const [allItems, setAllItems] = useState([]);
   let items;
   const [search, setSearch] = useState();
 
   useEffect(() => { 
-    if(props.search.length > 3){
-      console.log('filter use effect fired /Search Value:' + props.search);
-      let objects = ObjectDataArray.filter((object)=>{
-        items = object.Content.filter((data)=>{
-          if(props.search == null || props.search == ""){
-              items = [];
-              // console.log('returning null');
-              return null;
-          }else if(data.Text.toLowerCase().includes(props.search.toLowerCase())){
-            return data;
-  
-          }
-        }).map(data=>{
-          let timetoSeconds = convertTimestampToSeconds(data.Timestamp);
-          urlPathAndTime = object.URL+"&start="+timetoSeconds;
+    console.log('Filter Result Props:' + props);
+  });
 
-          return(
-              <FilterResult obj = {object} dataObj = {data} />
-          )
-        });
-        setAllItems(allItems.concat(items));
-      }).map(data=>{
-    
-      });  
-    }
-
-  }, [props]);
-  
-  return(
-    <div className="contentResults">
+  let allItems = [];
+  let objects = ObjectDataArray.filter((object)=>{
+    items = object.Content.filter((data)=>{
+      if(props.search == null || props.search == ""){
+          items = [];
+          return null;
+    }else if(data.Text.toLowerCase().includes(props.search.toLowerCase())){
+          return data;
+      }
+    }).map(data=>{
+      let timetoSeconds = '100' //this.convertTimestampToSeconds(data.Timestamp); <-- need to fix
+      urlPathAndTime = object.URL+"&start="+timetoSeconds;
+      return(
       <div>
         <ul style={{listStyleType:'none'}}>
-          {allItems}
+          <FilterResult obj = {object} dataObj = {data} />
         </ul>
       </div>
-    </div>
-  );
+      )
+    });
+    allItems = allItems.concat(items);
+
+  }).map(data=>{
+
+  });
+
+  return (<div>{allItems}</div>)
 }
+
 
 
 const App = () => {
@@ -154,8 +149,8 @@ const App = () => {
               />
           </div>
 
+          <Filter search = {search} />
         </header> 
-        <Filter search = {search} />
       </div>
     )
 }
