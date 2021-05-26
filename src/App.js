@@ -1,38 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import transcripts from './resources';
 import './App.css';
-import transcript97 from './resources/homeskoolin-97-transcript.json';
-import transcript1 from './resources/corona-1-transcript.json';
-import transcript2 from './resources/corona-2-transcript.json';
-import transcript3 from './resources/corona-3-transcript.json';
-import transcript4 from './resources/corona-4-transcript.json';
-import transcript5 from './resources/corona-5-transcript.json';
-import transcript6 from './resources/corona-6-transcript.json';
-import transcript7 from './resources/corona-7-transcript.json';
-import transcript8 from './resources/corona-8-transcript.json';
-import transcript9 from './resources/corona-9-transcript.json';
-import transcript10 from './resources/corona-10-transcript.json';
-import transcript11 from './resources/corona-11-transcript.json';
-import transcript12 from './resources/corona-12-transcript.json';
-import transcript13 from './resources/corona-13-transcript.json';
-import transcript14 from './resources/corona-14-transcript.json';
-import transcript15 from './resources/corona-15-transcript.json';
-import transcript16 from './resources/corona-16-transcript.json';
-import transcript17 from './resources/corona-17-transcript.json';
-import transcript18 from './resources/corona-18-transcript.json';
-import transcript19 from './resources/corona-19-transcript.json';
-import transcript20 from './resources/corona-20-transcript.json';
-import transcript21 from './resources/corona-21-transcript.json';
-import transcript22 from './resources/corona-22-transcript.json';
-import transcriptH1 from './resources/homeskoolin-1-transcript.json';
-import transcriptH2 from './resources/homeskoolin-2-transcript.json';
-import transcriptH3 from './resources/homeskoolin-3-transcript.json';
-import transcriptH4 from './resources/homeskoolin-4-transcript.json';
-import transcriptH8 from './resources/homeskoolin-8-transcript.json';
-import transcriptH97 from './resources/homeskoolin-97-transcript.json';
-
-let DataSet = transcript97.Content;
-let ObjectDataArray = [transcriptH97, transcript1, transcript2, transcript3, transcript4, transcript5, transcript6, transcript7, transcript8, transcript9, transcript10, transcript11, transcript12, transcript13, transcript14, transcript15, transcript16, transcript17, transcript18, transcript19, transcript20, transcript21, transcript22, transcriptH1, transcriptH2, transcriptH3, transcriptH4, transcriptH8];
-
 
 const styleInfo = {
 
@@ -54,7 +22,7 @@ const episodeTitleStyle ={
   position:'relative'
 }
 
-let originalPath = transcript97.URL
+let originalPath = transcripts[102].URL;
 
 function convertTimestampToSeconds(timestampVal){
   let hoursPreConvert;
@@ -105,7 +73,6 @@ const FilterResult = (props) => {
   )
 }
 
-
 const Filter = (props) => {
   let items;
   let allItems = [];
@@ -114,7 +81,7 @@ const Filter = (props) => {
   useEffect(() => { 
   });
 
-  let objects = ObjectDataArray.filter((object)=>{
+  let objects = transcripts.filter((object)=>{
     items = object.Content.filter((data)=>{
       if(props.search == null || props.search == ""){
           items = [];
@@ -143,8 +110,6 @@ const Filter = (props) => {
           </div>
         )
 }
-
-
 
 const App = () => {
 
