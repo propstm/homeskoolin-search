@@ -7,6 +7,13 @@ const Filter = (props:any) => {
     let items;
     let allItems = [];
 
+    const ResultListStyle={
+        listStyleType: 'none',
+        height: '42vh',
+        overflow: 'auto',
+        width: '535px'
+      };
+
     function convertTimestampToSeconds(timestampVal:any){
         let hoursPreConvert;
         let seconds;
@@ -47,7 +54,7 @@ const Filter = (props:any) => {
     });
   
     return (<div>
-              <ul style={{listStyleType:'none'}}>{allItems}</ul>
+              <ul style={ResultListStyle}>{allItems}</ul>
             </div>
           )
   }

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import VideoPlayer from './VideoPlayer';
 import Filter from './Filter';
 import {originalVideo} from './resources';
+import debounce from 'lodash.debounce'
 import './App.css';
 
 const styleInfo = {
@@ -21,16 +22,10 @@ const App = () => {
 
   const [urlPath, setUrlPath] = useState(originalPath);
   const [search, setSearch] = useState('');
-  
-    //https://www.freecodecamp.org/news/javascript-debounce-example/
-  // function debounce(func: { (query: any): void; apply?: any; }, timeout = 500){
-  //   let timer: NodeJS.Timeout;
-  //   return (...args: any) => {
-  //     clearTimeout(timer);
-  //     timer = setTimeout(() => { func.apply(this, args); }, timeout);
-  //   };
-  // }
-  function saveInput(query: React.SetStateAction<string>){
+
+  const delayedHandleChange = debounce(targetValue => saveInput(targetValue), 500);
+
+  function saveInput(query:string){
     console.log('Saving data:' + query);
     setSearch(query);
   }
@@ -58,8 +53,8 @@ const App = () => {
               <input type="text" 
                 placeholder="Enter item to be searched"  
                 onChange={(e)=> { 
-                  
-                    saveInput(e.target.value);
+                  delayedHandleChange(e.target.value);
+                    
                   }}             
                 />
             </div>
