@@ -124,4 +124,6 @@ transcriptH80, transcriptH81, transcriptH82, transcriptH83, transcriptH84, trans
 transcriptH90, transcriptH91, transcriptH92, transcriptH93, transcriptH94, transcriptH95, transcriptH96, transcriptH97, transcriptH98, transcriptH99
 ];
 
-export default transcripts;
+let originalVideo = transcriptH97.URL;
+
+export {transcripts, originalVideo};
